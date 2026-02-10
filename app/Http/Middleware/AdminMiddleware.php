@@ -23,7 +23,7 @@ class AdminMiddleware
             ], 401);
         }
 
-        if(($user->role ?? null) !== 'admin'){
+        if((strtolower((string)$user->role ?? '')) !== 'admin'){
             return response()->json([
                 'message' => "⛔️ Prohibit. Accès només per l'Administrador."
             ], 403);

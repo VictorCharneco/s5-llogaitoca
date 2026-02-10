@@ -28,6 +28,6 @@ Route::middleware('auth:api')->group(function(){
     Route::post('/instruments/{id}/reserve', [ReservationController::class, 'reserve']);
     
     Route::get('/reservations/my', [ReservationController::class, 'myReservations']);
-    Route::post('reservations/{id}/return', [ReservationController::class, 'returnReservation']);
+    Route::post('/reservations/{id}/return', [ReservationController::class, 'returnReservation']);
     Route::delete('/reservations/{id}', [ReservationController::class, 'destroy']);
 });

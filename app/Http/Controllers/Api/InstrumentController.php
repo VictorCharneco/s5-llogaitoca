@@ -35,7 +35,7 @@ class InstrumentController extends Controller
     public function store(Request $request): JsonResponse{
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:100'],
-            'description' => ['nullable', 'string'],
+            'description' => ['required', 'string'],
             'type' => ['required', 'in:STRING,KEYBOARD,PERCUSSION,WIND'],
             'status' => ['required', 'in:AVAILABLE,OUT_OF_STOCK,MAINTENANCE'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
@@ -55,7 +55,7 @@ class InstrumentController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:100'],
-            'description' => ['nullable', 'string'],
+            'description' => ['required', 'string'],
             'type' => ['required', 'in:STRING,KEYBOARD,PERCUSSION,WIND'],
             'status' => ['required', 'in:AVAILABLE,OUT_OF_STOCK,MAINTENANCE'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
