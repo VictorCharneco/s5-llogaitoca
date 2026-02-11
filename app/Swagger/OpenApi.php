@@ -18,10 +18,25 @@ API REST per a lloguer d'instruments (Sprint 5).
 
 
 **Rols**
-- `admin`: gestiona usuaris i instruments, i pot veure reserves.
+- `admin`: gestiona usuaris i instruments, pot veure les reserves i gestionar les trobades (meetings).
 
-- `user`: pot veure instruments i gestionar les seves reserves.
+- `user`: pot veure instruments, gestionar les seves reserves i crear/gestionar la seva participació en meetings.
 
+
+**Meetings**
+- Per crear un meeting cal una **reserva ACTIVE** del mateix user.
+
+- El `day` del meeting ha d'estar **dins** el rang `start_date` / `end_date` de la reserva.
+
+- **Rooms disponibles**: `SPRINGSTEEN`, `DYLAN`, `ARMSTRONG`, `MARTIN`.
+
+- **Màxim 4 persones** per meeting.
+
+- No es permet **solapar horaris**:
+  - mateixa sala (room overlap)
+  - mateix usuari (user overlap)
+
+- Admin pot marcar `status`: `ACTIVE`, `FINISHED`, `CANCELLED`.
 
 
 **Com provar ràpid a Swagger UI**
