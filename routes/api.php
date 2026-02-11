@@ -5,7 +5,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\InstrumentController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ReservationController;
-
+use App\Http\Controllers\Api\MeetingController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -21,6 +21,9 @@ Route::middleware('auth:api')->group(function(){
         Route::put('/instruments/{id}', [InstrumentController::class, 'update']);
         Route::delete('/instruments/{id}', [InstrumentController::class, 'destroy']);
         Route::get('/reservations', [ReservationController::class, 'index']);
+        Route::get('/meetings', [MeetingController::class, 'index']);
+        Route::delete('/meetings/{id}', [MeetingController::class, 'destroy']);
+        Route::patch('/meetings/{id}/status', [MeetingController::class, 'updateStatus']);
     });
 
     Route::get('/instruments', [InstrumentController::class, 'index']);
@@ -30,4 +33,9 @@ Route::middleware('auth:api')->group(function(){
     Route::get('/reservations/my', [ReservationController::class, 'myReservations']);
     Route::post('/reservations/{id}/return', [ReservationController::class, 'returnReservation']);
     Route::delete('/reservations/{id}', [ReservationController::class, 'destroy']);
+
+    Route::post('/meetings', [MeetingController::class, 'store']);
+    Route::post('/meetings/{id}/join', [MeetingController::class, 'join']);
+    Route::post('/meetings/{id}/quit', [MeetingController::class, 'quit']);
+    Route::get('/meetings/my', [MeetingController::class, 'myMeetings']);
 });
