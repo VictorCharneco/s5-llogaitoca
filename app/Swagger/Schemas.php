@@ -123,4 +123,67 @@ use OpenApi\Attributes as OA;
         )
     ]
 )]
+#[OA\Schema(
+    schema: "Meeting",
+    required: ["id", "reservation_id", "room", "day", "start_time", "end_time", "status"],
+    properties: [
+        new OA\Property(property: "id", type: "integer", example: 1),
+        new OA\Property(property: "reservation_id", type: "integer", example: 1),
+        new OA\Property(property: "room", type: "string", enum: ["SPRINGSTEEN","DYLAN","ARMSTRONG","MARTIN"], example: "DYLAN"),
+        new OA\Property(property: "day", type: "string", format: "date", example: "2026-02-12"),
+        new OA\Property(property: "start_time", type: "string", example: "18:00:00"),
+        new OA\Property(property: "end_time", type: "string", example: "19:00:00"),
+        new OA\Property(property: "status", type: "string", enum: ["ACTIVE","FINISHED","CANCELLED"], example: "ACTIVE"),
+        new OA\Property(property: "users_count", type: "integer", example: 1, maximum: 4, nullable: true),
+        new OA\Property(property: "created_at", type: "string", format: "date-time", example: "2026-02-11T11:12:41.000000Z"),
+        new OA\Property(property: "updated_at", type: "string", format: "date-time", example: "2026-02-11T11:12:41.000000Z"),
+    ]
+)]
+#[OA\Schema(
+    schema: "MeetingWithRelations",
+    required: ["id", "reservation_id", "room", "day", "start_time", "end_time", "status", "reservation", "users"],
+    properties: [
+        new OA\Property(property: "id", type: "integer", example: 1),
+        new OA\Property(property: "reservation_id", type: "integer", example: 1),
+        new OA\Property(property: "room", type: "string", enum: ["SPRINGSTEEN","DYLAN","ARMSTRONG","MARTIN"], example: "DYLAN"),
+        new OA\Property(property: "day", type: "string", format: "date", example: "2026-02-12"),
+        new OA\Property(property: "start_time", type: "string", example: "18:00:00"),
+        new OA\Property(property: "end_time", type: "string", example: "19:00:00"),
+        new OA\Property(property: "status", type: "string", enum: ["ACTIVE","FINISHED","CANCELLED"], example: "ACTIVE"),
+        new OA\Property(property: "users_count", type: "integer", example: 1, maximum: 4),
+        new OA\Property(property: "reservation", ref: "#/components/schemas/Reservation"),
+        new OA\Property(
+            property: "users",
+            type: "array",
+            items: new OA\Items(ref: "#/components/schemas/User")
+        ),
+        new OA\Property(property: "created_at", type: "string", format: "date-time", example: "2026-02-11T11:12:41.000000Z"),
+        new OA\Property(property: "updated_at", type: "string", format: "date-time", example: "2026-02-11T11:12:41.000000Z"),
+    ]
+)]
+#[OA\Schema(
+    schema: "MeetingListResponse",
+    properties: [
+        new OA\Property(
+            property: "data",
+            type: "array",
+            items: new OA\Items(ref: "#/components/schemas/MeetingWithRelations")
+        )
+    ]
+)]
+#[OA\Schema(
+    schema: "MeetingCreateResponse",
+    properties: [
+        new OA\Property(property: "message", type: "string", example: "✅ Quedada creada"),
+        new OA\Property(property: "data", ref: "#/components/schemas/MeetingWithRelations"),
+    ]
+)]
+#[OA\Schema(
+    schema: "MeetingUpdateStatusResponse",
+    properties: [
+        new OA\Property(property: "message", type: "string", example: "✅ Estat actualitzat"),
+        new OA\Property(property: "data", ref: "#/components/schemas/Meeting"),
+    ]
+)]
+
 class Schemas {}
