@@ -24,6 +24,7 @@ class AuthController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'role' => 'user',
         ]);
 
         $token = $user->createToken('api-token')->accessToken;
