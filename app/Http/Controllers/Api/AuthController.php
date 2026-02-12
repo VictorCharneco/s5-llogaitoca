@@ -24,6 +24,7 @@ class AuthController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'role' => 'user',
         ]);
 
         $token = $user->createToken('api-token')->accessToken;
@@ -62,12 +63,10 @@ class AuthController extends Controller
 
     public function logout(Request $request): JsonResponse{
         $user = $request->user();
-        if($user && $user->token()){
-            $user->token()->revoke();
+        if($user){
+            $user->tokens()->update(['revoked' => true]);
         }
-        return response()->json([
-            'message' => 'logged out',
-        ]);
+        return response()->json(['message' => 'logged out',]);
     }
 
 }
