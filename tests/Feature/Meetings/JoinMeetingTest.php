@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Meetings;
 
-
+use App\Models\Meeting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Passport\ClientRepository;
@@ -31,7 +31,22 @@ class JoinMeetingTest extends TestCase{
         $response->assertStatus(404);
     }
 
+    public function test_join_returns_404_if_meeting_is_not_active():void{
+        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
+        $user = User::factory()->create(['role' => 'user']);
+        $token = $user->createToken('api-token')->accessToken;
+        $meeting = Meeting::factory()->create([
+            'status' => 'FINISHED',
+        ]);
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+            'Accept' => 'application/json',
+        ])->postJson("/api/meetings/{$meeting->id}/join");
+
+        $response->assertStatus(404);
+    }
 
 
 

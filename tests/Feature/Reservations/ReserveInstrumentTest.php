@@ -68,4 +68,41 @@ class ReserveInstrumentTest extends TestCase{
 
         $response->assertStatus(422)->assertJsonValidationErrors(['start_date', 'end_date']);
     }
+
+    public function test_reserve_returns_404_if_instrument_not_found():void{
+        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
+
+        $user = User::factory()->create(['role' => 'user']);
+        $token = $user->createToken('api-token')->accessToken;
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+            'Accept' => 'application/json',
+        ])->postJson("/api/instruments/1985/reserve", [
+            'start_date' => '2026-03-20',
+            'end_date' => '2026-03-30',
+        ]);
+
+        $response->assertStatus(404);
+    }
+
+    public function test_reserve_rejects_if_instrument_not_available():void{
+        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
+
+        $user = User::factory()->create(['role' => 'user']);
+        $token = $user->createToken('api-token')->accessToken;
+        $instrument = Instrument::factory()->create(['status' => 'MAINTENANCE']);
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+            'Accept' => 'application/json',
+        ])->postJson("/api/instruments/{$instrument->id}/reserve", [
+            'start_date' => '2026-03-20',
+            'end_date' => '2026-03-30',
+        ]);
+
+        $response->assertStatus(422);
+    }
+
+
 }
