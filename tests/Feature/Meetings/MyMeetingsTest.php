@@ -41,9 +41,13 @@ class MyMeetingsTest extends TestCase{
                     'room',
                     'day',
                     'start_time',
+                    'end_time',
                     'status',
                     'created_at',
                     'updated_at',
+                    'users_count',
+                    'reservation',
+                    'users',
                 ],
             ],
         ])->assertJsonCount(1, 'data')->assertJsonPath('data.0.id', $myMeeting->id);
