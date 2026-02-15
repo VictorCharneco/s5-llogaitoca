@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Meetings;
 
+use App\Models\Meeting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Passport\ClientRepository;
@@ -29,7 +30,36 @@ class MeetingsIndexAdminTest extends TestCase{
         $response->assertStatus(403);
     }
 
+    public function test_admin_can_list_meetings():void{
+        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
+        $admin = User::factory()->create(['role' => 'admin']);
+        $token = $admin->createToken('api-token')->accessToken;
+        Meeting::factory()->count(3)->create();
 
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+            'Accept' => 'application/json',
+        ])->getJson('/api/meetings');
+
+        $response->assertStatus(200)->assertJsonStructure([
+            'data' => [
+                '*' => [
+                    'id',
+                    'reservation_id',
+                    'room',
+                    'day',
+                    'start_time',
+                    'end_time',
+                    'status',
+                    'created_at',
+                    'updated_at',
+                    'users_count',
+                    'reservation',
+                    'users',
+                ],
+            ],
+        ])->assertJsonCount(3, 'data');
+    }
 
 }
