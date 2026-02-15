@@ -32,10 +32,49 @@ class MyReservationsTest extends TestCase{
 
         $response->assertStatus(200)->assertJsonStructure([
             'data' => [
-                '*' => ['id', 'user_id', 'instrument_id', 'start_date', 'end_date', 'created_at', 'updated_at',],
+                '*' => [
+                    'id',
+                    'user_id',
+                    'instrument_id',
+                    'start_date',
+                    'end_date',
+                    'status',
+                    'created_at',
+                    'updated_at',
+                ],
             ],
         ])->assertJsonCount(2, 'data');
     }
 
 
+    public function test_user_can_filter_my_reservations_by_status():void{
+        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
+
+        $user = User::factory()->create(['role' => 'user']);
+        $token = $user->createToken('api-token')->accessToken;
+
+        Reservation::factory()->create([
+            'user_id' => $user->id,
+            'status' => 'ACTIVE',
+        ]);
+
+        Reservation::factory()->create([
+            'user_id' => $user->id,
+            'status' => 'FINISHED',
+        ]);
+
+        $user2 = User::factory()->create(['role' => 'user']);
+        Reservation::factory()->create([
+            'user_id' => $user2->id,
+            'status' => 'ACTIVE',
+        ]);
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+            'Accept' => 'application/json',
+        ])->getJson('/api/reservations/my?status=ACTIVE');
+
+        $response->assertStatus(200)
+        ->assertJsonCount(1, 'data')->assertJsonPath('data.0.status', 'ACTIVE');
+    }
 }
