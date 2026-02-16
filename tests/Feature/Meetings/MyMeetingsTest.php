@@ -11,6 +11,11 @@ use Tests\TestCase;
 class MyMeetingsTest extends TestCase{
     use RefreshDatabase;
 
+    public function setUp(): void{
+
+        parent::setUp();
+        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
+    }
 
     public function test_my_meetings_requires_authentication():void{
         $response = $this->getJSon('/api/meetings/my');
@@ -19,7 +24,6 @@ class MyMeetingsTest extends TestCase{
 
 
     public function test_user_can_list_my_meetings():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;

@@ -11,6 +11,11 @@ use Tests\TestCase;
 class UpdateMeetingStatusAdminTest extends TestCase{
     use RefreshDatabase;
 
+    public function setUp(): void{
+        parent::setUp();
+        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
+    }
+
     public function test_update_status_requires_authentication():void{
         $meeting = Meeting::factory()->create();
         $response = $this->patchJson("/api/meetings/{$meeting->id}/status", [
@@ -21,7 +26,6 @@ class UpdateMeetingStatusAdminTest extends TestCase{
     }
 
     public function test_update_status_requires_admin_role():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -39,7 +43,6 @@ class UpdateMeetingStatusAdminTest extends TestCase{
 
 
     public function test_admin_can_update_meeting_status():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $admin = User::factory()->create(['role' => 'admin']);
         $token = $admin->createToken('api-token')->accessToken;
@@ -64,7 +67,6 @@ class UpdateMeetingStatusAdminTest extends TestCase{
     }
 
     public function test_update_status_validates_required_fields():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $admin = User::factory()->create(['role' => 'admin']);
         $token = $admin->createToken('api-token')->accessToken;
@@ -80,7 +82,6 @@ class UpdateMeetingStatusAdminTest extends TestCase{
 
 
     public function test_update_status_rejects_invalid_status():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $admin = User::factory()->create(['role' => 'admin']);
         $token = $admin->createToken('api-token')->accessToken;
@@ -97,7 +98,6 @@ class UpdateMeetingStatusAdminTest extends TestCase{
     }
 
     public function test_update_status_returns_404_if_meeting_not_found():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $admin = User::factory()->create(['role' => 'admin']);
         $token = $admin->createToken('api-token')->accessToken;

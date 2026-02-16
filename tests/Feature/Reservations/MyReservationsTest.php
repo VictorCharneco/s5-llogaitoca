@@ -11,13 +11,17 @@ use App\Models\User;
 class MyReservationsTest extends TestCase{
     use RefreshDatabase;
 
+    public function setUp(): void{
+        parent::setUp();
+        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
+    }
+
     public function test_my_reservation_requires_authentication():void{
         $response = $this->getJson('/api/reservations/my');
         $response->assertStatus(401);
     }
 
     public function test_user_can_list_my_reservations(): void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -48,7 +52,6 @@ class MyReservationsTest extends TestCase{
 
 
     public function test_user_can_filter_my_reservations_by_status():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;

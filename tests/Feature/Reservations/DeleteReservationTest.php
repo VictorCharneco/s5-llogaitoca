@@ -11,6 +11,11 @@ use Tests\TestCase;
 class DeleteReservationTest extends TestCase{
     use RefreshDatabase;
 
+    public function setUp(): void{
+        parent::setUp();
+        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
+    }
+
     public function test_delete_reservation_requires_authentication(): void{
         $reservation = Reservation::factory()->create();
         $response = $this->deleteJson("/api/reservations/{$reservation->id}");
@@ -18,7 +23,6 @@ class DeleteReservationTest extends TestCase{
     }
 
     public function test_user_cant_delete_other_user_reservation(): void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user1 = User::factory()->create(['role' => 'user']);
         $user2 = User::factory()->create(['role' => 'user']);
@@ -34,7 +38,6 @@ class DeleteReservationTest extends TestCase{
     }
 
     public function test_user_can_delete_own_reservation(): void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -51,7 +54,6 @@ class DeleteReservationTest extends TestCase{
     }
 
     public function test_admin_can_delete_any_reservation(): void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $admin = User::factory()->create(['role' => 'admin']);
         $token = $admin->createToken('api-token')->accessToken;
@@ -68,7 +70,6 @@ class DeleteReservationTest extends TestCase{
     }
 
     public function test_delete_return_404_if_reservation_not_found():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
         
         $admin = User::factory()->create(['role' => 'admin']);
         $token = $admin->createToken('api-token')->accessToken;
