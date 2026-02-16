@@ -26,6 +26,8 @@ Route::middleware('auth:api')->group(function(){
         Route::patch('/meetings/{id}/status', [MeetingController::class, 'updateStatus']);
     });
 
+    Route::delete('/users/{id}', [UserController::class, 'destroy']);
+
     Route::get('/instruments', [InstrumentController::class, 'index']);
     Route::get('/instruments/{id}', [InstrumentController::class, 'show']);
     Route::post('/instruments/{id}/reserve', [ReservationController::class, 'reserve']);

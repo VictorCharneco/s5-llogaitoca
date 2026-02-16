@@ -28,4 +28,30 @@ class UserController extends Controller
 
         return response()->json(['data' => $user,]);
     }
+
+    public function destroy(int $id): JsonResponse{
+        $authUser = request()->user();
+
+        if (!$authUser) {
+            return response()->json(['message' => '⚠️ No autenticat'], 401);
+        }
+
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json(['message' => 'Usuari no trobat'], 404);
+        }
+
+        $isAdmin = ($authUser->role ?? null) === 'admin';
+        $isSelf  = $authUser->id === $user->id;
+
+        if (!$isAdmin && !$isSelf) {
+            return response()->json(['message' => '⛔️ Prohibit'], 403);
+        }
+
+        $user->delete();
+
+        return response()->json(['message' => 'Usuari eliminat'], 200);
+    }
+
 }
