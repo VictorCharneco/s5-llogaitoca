@@ -104,6 +104,12 @@ use OpenApi\Attributes as OA;
     ]
 )]
 #[OA\Schema(
+    schema: "UserShowResponse",
+    properties: [
+        new OA\Property(property: "data", ref: "#/components/schemas/User"),
+    ]
+)]
+#[OA\Schema(
     schema: "InstrumentListResponse",
     properties: [
         new OA\Property(
