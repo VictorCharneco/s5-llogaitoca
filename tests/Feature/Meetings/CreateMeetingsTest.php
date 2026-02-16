@@ -12,13 +12,17 @@ use Tests\TestCase;
 class CreateMeetingsTest extends TestCase{
     use RefreshDatabase;
 
+    public function setUp(): void{
+        parent::setUp();
+        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
+    }
+
     public function test_create_meeting_requires_authentication():void{
         $response = $this->postJson('/api/meetings', []);
         $response->assertStatus(401);
     }
 
     public function test_create_meeting_rejects_admin_role():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $admin = User::factory()->create(['role' => 'admin']);
         $token = $admin->createToken('api-token')->accessToken;
@@ -41,7 +45,6 @@ class CreateMeetingsTest extends TestCase{
     }
 
     public function test_user_can_create_meeting():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -76,7 +79,6 @@ class CreateMeetingsTest extends TestCase{
     }
 
     public function test_create_meeting_validates_required_fields():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -90,7 +92,6 @@ class CreateMeetingsTest extends TestCase{
     }
 
     public function test_create_meeting_rejects_if_reservation_is_not_mine():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $user2 = User::factory()->create(['role' => 'user']);
@@ -120,7 +121,6 @@ class CreateMeetingsTest extends TestCase{
     }
 
     public function test_create_meeting_rejects_if_reservation_is_not_active():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -149,7 +149,6 @@ class CreateMeetingsTest extends TestCase{
     }
 
     public function test_create_meeting_rejects_if_day_is_outside_rental_period():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -178,7 +177,6 @@ class CreateMeetingsTest extends TestCase{
     }
 
     public function test_create_meeting_rejects_if_room_has_overlap():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -216,7 +214,6 @@ class CreateMeetingsTest extends TestCase{
     }
 
     public function test_create_meeting_rejects_if_user_has_overlap():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;

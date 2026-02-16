@@ -13,6 +13,11 @@ use Tests\TestCase;
 class ShowInstrumentsTest extends TestCase{
     use RefreshDatabase;
 
+    public function setUp(): void{
+        parent::setUp();
+        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
+    }
+
     public function test_show_instrument_requires_authentication(): void{
         $instrument = Instrument::factory()->create();
         $response = $this->getJson("/api/instruments/{$instrument->id}");
@@ -20,7 +25,6 @@ class ShowInstrumentsTest extends TestCase{
     }
 
     public function test_user_can_view_instruments():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -44,7 +48,6 @@ class ShowInstrumentsTest extends TestCase{
     }
 
     public function test_returns_404_if_instrument_not_found():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;

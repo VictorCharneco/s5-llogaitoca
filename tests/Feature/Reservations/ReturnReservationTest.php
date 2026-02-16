@@ -11,6 +11,11 @@ use Tests\TestCase;
 class ReturnReservationTest extends TestCase{
     use RefreshDatabase;
 
+    public function setUp(): void{
+        parent::setUp();
+        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
+    }
+
     public function test_return_requires_authentication():void{
         $reservation = Reservation::factory()->create(['status' => 'ACTIVE']);
         $response = $this->postJson("/api/reservations/{$reservation->id}/return");
@@ -18,7 +23,6 @@ class ReturnReservationTest extends TestCase{
     }
 
     public function test_user_cant_return_other_user_reservation():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user1 = User::factory()->create(['role' => 'user']);
         $user2 = User::factory()->create(['role' => 'user']);
@@ -37,7 +41,6 @@ class ReturnReservationTest extends TestCase{
     }
 
     public function test_return_rejects_if_reservation_is_not_active(): void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -55,7 +58,6 @@ class ReturnReservationTest extends TestCase{
     }
 
     public function test_user_can_return_own_active_reservation(): void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -74,7 +76,6 @@ class ReturnReservationTest extends TestCase{
     }
 
     public function test_return_404_if_reservation_not_found(): void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;

@@ -12,6 +12,11 @@ class DeleteInstrumentAdminTest extends TestCase{
 
     use RefreshDatabase;
 
+    public function setUp(): void{
+        parent::setUp();
+        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
+    }
+
     public function test_delete_instrument_requires_authentication():void{
         $instrument = Instrument::factory()->create();
         $response = $this->deleteJson("/api/instruments/{$instrument->id}");
@@ -19,7 +24,6 @@ class DeleteInstrumentAdminTest extends TestCase{
     }
 
     public function test_delete_instrument_requires_admin_role():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -35,7 +39,6 @@ class DeleteInstrumentAdminTest extends TestCase{
 
 
     public function test_admin_can_delete_instruments():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $admin = User::factory()->create(['role' => 'admin']);
         $token = $admin->createToken('api-token')->accessToken;
@@ -51,7 +54,6 @@ class DeleteInstrumentAdminTest extends TestCase{
 
     
     public function test_delete_returns_404_if_instrument_not_found():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $admin = User::factory()->create(['role' => 'admin']);
         $token = $admin->createToken('api-token')->accessToken;

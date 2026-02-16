@@ -12,8 +12,12 @@ use Tests\TestCase;
 class JoinMeetingOkTest extends TestCase{
     use RefreshDatabase;
 
-    public function test_user_can_join_meeting(): void{
+    public function setUp(): void{
+        parent::setUp();
         app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
+    }
+
+    public function test_user_can_join_meeting(): void{
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -46,7 +50,6 @@ class JoinMeetingOkTest extends TestCase{
     }
 
     public function test_join_rejects_if_user_already_in():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -76,7 +79,6 @@ class JoinMeetingOkTest extends TestCase{
     }
 
     public function test_join_rejects_if_meeting_is_full():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -112,7 +114,6 @@ class JoinMeetingOkTest extends TestCase{
 
 
     public function test_join_rejects_if_user_has_no_active_reservation():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -143,7 +144,6 @@ class JoinMeetingOkTest extends TestCase{
 
 
     public function test_join_rejects_if_user_has_time_overlap():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;

@@ -11,6 +11,11 @@ use Tests\TestCase;
 class QuitMeetingTest extends TestCase{
     use RefreshDatabase;
 
+    public function setUp(): void{
+        parent::setUp();
+        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
+    }
+
     public function test_quit_meeting_requires_authentication():void{
         $meeting = Meeting::factory()->create();
         $response = $this->postJson("/api/meetings/{$meeting->id}/quit");
@@ -18,7 +23,6 @@ class QuitMeetingTest extends TestCase{
     }
 
     public function test_quit_returns_404_if_meeting_not_found():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -32,7 +36,6 @@ class QuitMeetingTest extends TestCase{
     }
 
     public function test_user_cant_quit_if_not_joined():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -47,7 +50,6 @@ class QuitMeetingTest extends TestCase{
     }
 
     public function test_user_can_quit_meeting():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;

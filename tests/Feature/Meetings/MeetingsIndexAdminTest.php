@@ -11,13 +11,17 @@ use Tests\TestCase;
 class MeetingsIndexAdminTest extends TestCase{
     use RefreshDatabase;
 
+    public function setUp(): void{
+        parent::setUp();
+        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
+    }
+
     public function test_meetings_index_requires_authentication():void{
         $response = $this->getJson('/api/meetings');
         $response->assertStatus(401);
     }
 
     public function test_meetings_index_requires_admin_role(): void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -31,7 +35,6 @@ class MeetingsIndexAdminTest extends TestCase{
     }
 
     public function test_admin_can_list_meetings():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $admin = User::factory()->create(['role' => 'admin']);
         $token = $admin->createToken('api-token')->accessToken;

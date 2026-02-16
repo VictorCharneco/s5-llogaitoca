@@ -11,6 +11,11 @@ use Tests\TestCase;
 class DeleteMeetingAdminTest extends TestCase{
     use RefreshDatabase;
 
+    public function setUp(): void{
+        parent::setUp();
+        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
+    }
+
     public function test_delete_meeting_requires_authentication():void{
         $meeting = Meeting::factory()->create();
         $response = $this->deleteJson("/api/meetings/{$meeting->id}");
@@ -19,7 +24,6 @@ class DeleteMeetingAdminTest extends TestCase{
 
 
     public function test_delete_meeting_requires_admin_role():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -34,7 +38,6 @@ class DeleteMeetingAdminTest extends TestCase{
     }
 
     public function test_admin_can_delete_meeting():void {
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $admin = User::factory()->create(['role' => 'admin']);
         $token = $admin->createToken('api-token')->accessToken;
@@ -51,7 +54,6 @@ class DeleteMeetingAdminTest extends TestCase{
     }
 
     public function test_delete_meeting_returns_404_if_not_found():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $admin = User::factory()->create(['role' => 'admin']);
         $token = $admin->createToken('api-token')->accessToken;

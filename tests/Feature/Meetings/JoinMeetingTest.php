@@ -12,13 +12,17 @@ use Tests\TestCase;
 class JoinMeetingTest extends TestCase{
     use RefreshDatabase;
 
+    public function setUp(): void{
+        parent::setUp();
+        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
+    }
+
     public function test_join_requires_authentication():void {
         $response = $this->postJson('/api/meetings/1/join', []);
         $response->assertStatus(401);
     }
 
     public function test_join_returns_404_if_meeting_not_found():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -32,7 +36,6 @@ class JoinMeetingTest extends TestCase{
     }
 
     public function test_join_returns_404_if_meeting_is_not_active():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;

@@ -10,13 +10,17 @@ use Tests\TestCase;
 class CreateInstrumentAdminTest extends TestCase{
     use RefreshDatabase;
 
+    public function setUp(): void{
+        parent::setUp();
+        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
+    }
+
     public function test_create_instrument_requires_authentication():void{
         $response = $this->postJson('/api/instruments', []);
         $response->assertStatus(401);
     }
 
     public function test_create_instrument_requires_admin_role():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -37,7 +41,6 @@ class CreateInstrumentAdminTest extends TestCase{
     }
 
     public function test_admin_can_create_instrument():void {
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $admin = User::factory()->create(['role' => 'admin']);
         $token = $admin->createToken('api-token')->accessToken;
@@ -71,7 +74,6 @@ class CreateInstrumentAdminTest extends TestCase{
 
 
     public function test_create_instrument_validates_required_fields():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $admin = User::factory()->create(['role' => 'admin']);
         $token = $admin->createToken('api-token')->accessToken;
@@ -85,7 +87,6 @@ class CreateInstrumentAdminTest extends TestCase{
     }
 
     public function test_create_instrument_rejects_invalid_type_and_status():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $admin = User::factory()->create(['role' => 'admin']);
         $token = $admin->createToken('api-token')->accessToken;

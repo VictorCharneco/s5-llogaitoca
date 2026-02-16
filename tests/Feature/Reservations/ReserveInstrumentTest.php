@@ -14,6 +14,11 @@ use function Symfony\Component\Clock\now;
 class ReserveInstrumentTest extends TestCase{
     use RefreshDatabase;
 
+    public function setUp(): void{
+        parent::setUp();
+        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
+    }
+
     public function test_reserve_requires_authentication():void{
         $instrument = Instrument::factory()->create();
         $response = $this->postJson("/api/instruments/{$instrument->id}/reserve", []);
@@ -21,7 +26,6 @@ class ReserveInstrumentTest extends TestCase{
     }
 
     public function test_reserve_rejects_admin():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
         
         $admin = User::factory()->create(['role' => 'admin']);
         $token = $admin->createToken('api-token')->accessToken;
@@ -38,7 +42,6 @@ class ReserveInstrumentTest extends TestCase{
     }
 
     public function test_user_can_reserve_instrument():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -55,7 +58,6 @@ class ReserveInstrumentTest extends TestCase{
     }
 
     public function test_reserve_validates_dates():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -70,7 +72,6 @@ class ReserveInstrumentTest extends TestCase{
     }
 
     public function test_reserve_returns_404_if_instrument_not_found():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -87,7 +88,6 @@ class ReserveInstrumentTest extends TestCase{
     }
 
     public function test_reserve_rejects_if_instrument_not_available():void{
-        app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
