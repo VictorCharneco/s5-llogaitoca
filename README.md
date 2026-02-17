@@ -117,7 +117,7 @@ php artisan serve
 API URL: http://localhost:8000/api/...
 
 ### Postman colletion:
-postman-files/llogaitoca_postman_collection.json
+docs/llogaitoca_postman_collection.json
 
 ### Swagger (UI)
 
