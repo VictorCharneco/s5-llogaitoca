@@ -88,8 +88,17 @@ If it shows laravel, your .env is not set correctly yet. Fix DB_DATABASE first a
 ```bash
 php artisan passport:install
 ```
+If login returns "Personal access client not found", run:
+
+```bash
+php artisan passport:client --personal --name="Personal Access Client"
+```
+Choose "users" when asked.
+
+
 If Laravel asks:
 Would you like to run all pending database migrations? (yes/no) [yes]
+
 Type: no
 
 6) Seeders:
