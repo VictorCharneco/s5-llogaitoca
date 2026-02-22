@@ -21,7 +21,7 @@ class DeleteUserTest extends TestCase {
         $response->assertStatus(401);
     }
 
-    public function test_user_can_delete_own_account(): void{
+    public function test_user_cant_delete_own_account(): void{
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
 
@@ -30,11 +30,9 @@ class DeleteUserTest extends TestCase {
             'Accept' => 'application/json',
         ])->deleteJson("/api/users/{$user->id}");
 
-        $response->assertStatus(200);
+        $response->assertStatus(403);
 
-        $this->assertDatabaseMissing('users', [
-            'id' => $user->id,
-        ]);
+        $this->assertDatabaseHas('users', ['id' => $user->id,]);
     }
 
     public function test_user_cant_delete_other_user(): void{

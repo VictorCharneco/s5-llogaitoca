@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Users\DestroyUserRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 
@@ -29,29 +29,20 @@ class UserController extends Controller
         return response()->json(['data' => $user,]);
     }
 
-    public function destroy(int $id): JsonResponse{
-        $authUser = request()->user();
-
-        if (!$authUser) {
-            return response()->json(['message' => '⚠️ No autenticat'], 401);
-        }
-
+    public function destroy(DestroyUserRequest $request, int $id):JsonResponse{
         $user = User::find($id);
 
         if (!$user) {
-            return response()->json(['message' => 'Usuari no trobat'], 404);
-        }
-
-        $isAdmin = ($authUser->role ?? null) === 'admin';
-        $isSelf  = $authUser->id === $user->id;
-
-        if (!$isAdmin && !$isSelf) {
-            return response()->json(['message' => '⛔️ Prohibit'], 403);
+            return response()->json([
+                'message' => 'Usuari no trobat',
+            ], 404);
         }
 
         $user->delete();
 
-        return response()->json(['message' => 'Usuari eliminat'], 200);
+        return response()->json([
+            'message' => 'Usuari eliminat correctament',
+        ], 200);
     }
 
 }

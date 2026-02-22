@@ -3,31 +3,27 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\JsonResponse;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 
-class AuthController extends Controller
-{
-
-    public function register(Request $request): JsonResponse{
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:6'],
-
-        ]);
+class AuthController extends Controller{
+    
+    public function register(RegisterRequest $request): JsonResponse{
+        $validated = $request->validated();
 
         $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
             'role' => 'user',
         ]);
 
         $token = $user->createToken('api-token')->accessToken;
+
         return response()->json([
             'token' => $token,
             'user' => $user,
@@ -35,38 +31,33 @@ class AuthController extends Controller
     }
 
     public function login(Request $request): JsonResponse{
-        $data = $request->validate([
+        $validated = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
         ]);
 
-        $user = User::where('email', $data['email'])->first();
-        if(!$user || !Hash::check($data['password'], $user->password)){
-            throw ValidationException::withMessages([
-                'email' => ['El correo o la contrasenya son incorrectes'],
-            ]);
+        if (!Auth::attempt($validated)) {
+            return response()->json(['message' => 'Credencials incorrectes.'], 401);
         }
 
+        $user = $request->user();
         $token = $user->createToken('api-token')->accessToken;
 
         return response()->json([
             'token' => $token,
             'user' => $user,
-        ]);
-    }
-
-    public function me(Request $request): JsonResponse{
-        return response()->json([
-            'user' => $request->user(),
-        ]);
+        ], 200);
     }
 
     public function logout(Request $request): JsonResponse{
-        $user = $request->user();
-        if($user){
-            $user->tokens()->update(['revoked' => true]);
-        }
-        return response()->json(['message' => 'logged out',]);
+        $request->user()?->token()?->revoke();
+
+        return response()->json(['message' => 'Sessió tancada correctament.'], 200);
     }
 
+    public function me(Request $request):JsonResponse{
+        return response()->json([
+            'user' => $request->user(),
+        ], 200);
+    }
 }

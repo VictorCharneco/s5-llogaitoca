@@ -17,6 +17,7 @@ Route::middleware('auth:api')->group(function(){
     Route::middleware('admin')->group(function(){
         Route::get('/users', [UserController::class, 'index']);
         Route::get('/users/{id}', [UserController::class, 'show']);
+        Route::delete('/users/{id}', [UserController::class, 'destroy']);
         Route::post('/instruments', [InstrumentController::class, 'store']);
         Route::put('/instruments/{id}', [InstrumentController::class, 'update']);
         Route::delete('/instruments/{id}', [InstrumentController::class, 'destroy']);
@@ -25,8 +26,6 @@ Route::middleware('auth:api')->group(function(){
         Route::delete('/meetings/{id}', [MeetingController::class, 'destroy']);
         Route::patch('/meetings/{id}/status', [MeetingController::class, 'updateStatus']);
     });
-
-    Route::delete('/users/{id}', [UserController::class, 'destroy']);
 
     Route::get('/instruments', [InstrumentController::class, 'index']);
     Route::get('/instruments/{id}', [InstrumentController::class, 'show']);

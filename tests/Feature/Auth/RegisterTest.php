@@ -17,7 +17,8 @@ class RegisterTest extends TestCase{
         $data = [
             'name' => 'Test User',
             'email' => 'test@example.com',
-            'password' => 'test123',
+            'password' => 'StrongPass!1234',
+            'password_confirmation' => 'StrongPass!1234',
         ];
 
         $response = $this->postJson('/api/register', $data);
@@ -29,7 +30,7 @@ class RegisterTest extends TestCase{
 
         $response->assertJsonPath('user.email', 'test@example.com');
         $response->assertJsonPath('user.role', 'user');
-        $response->assertJsonMissing(['password' => 'test123']);
+        $response->assertJsonMissing(['password']);
         $this->assertDatabaseHas('users', [
             'email' => 'test@example.com',
             'role' => 'user',
