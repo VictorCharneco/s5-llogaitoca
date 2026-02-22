@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\Meetings\StoreMeetingRequest;
 use App\Http\Resources\MeetingResource;
 use App\Http\Controllers\Controller;
 use App\Models\Meeting;
@@ -35,18 +36,12 @@ class MeetingController extends Controller
         return response()->json(['data' => MeetingResource::collection($meetings)], 200);
     }
 
-    public function store(Request $request): JsonResponse{
+    public function store(StoreMeetingRequest $request): JsonResponse{
         if (Auth::user()?->role === 'admin') {
             return response()->json(['message' => "⛔️ Prohibit. Accès només per l'Administrador."], 403);
         }
 
-        $validated = $request->validate([
-            'reservation_id' => ['required', 'integer', 'exists:reservations,id'],
-            'room' => ['required', 'in:SPRINGSTEEN,DYLAN,ARMSTRONG,MARTIN'],
-            'day' => ['required', 'date'],
-            'start_time' => ['required', 'date_format:H:i'],
-            'end_time' => ['required', 'date_format:H:i', 'after:start_time'],
-        ]);
+        $validated = $request->validated();
 
         $reservation = Reservation::query()
             ->where('id', $validated['reservation_id'])
