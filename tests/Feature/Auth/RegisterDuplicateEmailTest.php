@@ -4,7 +4,6 @@
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Passport\ClientRepository;
 use Tests\TestCase;
@@ -21,10 +20,11 @@ class RegisterDuplicateEmailTest extends TestCase{
             'role' => 'user',
         ]);
 
-        $data = [ 
+        $data = [
             'name' => 'User Two',
             'email' => 'test@example.com',
-            'password' => 'test123',
+            'password' => 'StrongPass!1234',
+            'password_confirmation' => 'StrongPass!1234',
         ];
 
         $response = $this->postJson('/api/register', $data);

@@ -15,8 +15,8 @@ class LoginInvalidPasswordTest extends TestCase{
         app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
 
         User::factory()->create([
-            'email' => 'test@example',
-            'password' => Hash::make('valido123'),
+            'email' => 'test@example.com',
+            'password' => Hash::make('CorrectPass!1234'),
             'role' => 'user',
         ]);
 
@@ -25,8 +25,10 @@ class LoginInvalidPasswordTest extends TestCase{
             'password' => 'erroneo321',
         ];
 
-        $response = $this->postJson('api/login', $data);
-        $response->assertStatus(422)->assertJsonValidationErrors(['email']);
+        $response = $this->postJson('/api/login', $data);
+
+        $response->assertStatus(401);
+        $response->assertJsonStructure(['message']);
     }    
 
 }
