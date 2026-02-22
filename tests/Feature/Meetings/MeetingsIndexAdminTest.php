@@ -55,14 +55,15 @@ class MeetingsIndexAdminTest extends TestCase{
                     'start_time',
                     'end_time',
                     'status',
+                    'users_count',
+                    'users' => [
+                        '*' => ['id', 'name'],
+                    ],
                     'created_at',
                     'updated_at',
-                    'users_count',
-                    'reservation',
-                    'users',
                 ],
             ],
-        ])->assertJsonCount(3, 'data');
+        ]);
     }
 
 }

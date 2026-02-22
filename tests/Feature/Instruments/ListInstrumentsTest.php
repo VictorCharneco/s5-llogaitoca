@@ -32,7 +32,7 @@ class ListInstrumentsTest extends TestCase{
 
         $response->assertStatus(200)->assertJsonStructure([
             'data' => [
-                '*' => ['id', 'name', 'type', 'status', 'image_path', 'created_at', 'updated_at',],
+                '*' => ['id', 'name', 'type', 'status', 'image_url', 'created_at', 'updated_at',],
             ],
         ]);
     }
@@ -47,8 +47,11 @@ class ListInstrumentsTest extends TestCase{
             'Accept' => 'application/json',
         ])->getJson('/api/instruments');
 
-        $response->assertStatus(200);
-        
+       $response->assertStatus(200)->assertJsonStructure([
+            'data' => [
+                '*' => ['id', 'name', 'description', 'type', 'status', 'image_url', 'created_at', 'updated_at',],
+            ],
+        ]);
     }
 
 

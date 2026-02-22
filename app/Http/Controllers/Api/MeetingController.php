@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Resources\MeetingResource;
 use App\Http\Controllers\Controller;
 use App\Models\Meeting;
 use App\Models\Reservation;
@@ -12,17 +13,17 @@ use Illuminate\Support\Facades\Auth;
 class MeetingController extends Controller
 {
     public function index(): JsonResponse{
-        $meetings = Meeting::with(['reservation', 'users'])
+        $meetings = Meeting::with(['users'])
             ->withCount('users')
             ->orderBy('day')
             ->orderBy('start_time')
             ->get();
 
-        return response()->json(['data' => $meetings], 200);
+        return response()->json(['data' => MeetingResource::collection($meetings)], 200);
     }
 
     public function myMeetings(): JsonResponse{
-        $meetings = Meeting::with(['reservation', 'users'])
+        $meetings = Meeting::with(['users'])
             ->withCount('users')
             ->whereHas('users', function ($q) {
                 $q->where('users.id', Auth::id());
@@ -31,7 +32,7 @@ class MeetingController extends Controller
             ->orderBy('start_time')
             ->get();
 
-        return response()->json(['data' => $meetings], 200);
+        return response()->json(['data' => MeetingResource::collection($meetings)], 200);
     }
 
     public function store(Request $request): JsonResponse{
@@ -100,7 +101,7 @@ class MeetingController extends Controller
 
         return response()->json([
             'message' => '✅ Quedada creada',
-            'data' => $meeting->load(['reservation', 'users'])
+            'data' => new MeetingResource($meeting->load(['users'])->loadCount('users')),
         ], 201);
     }
 
@@ -183,7 +184,7 @@ class MeetingController extends Controller
 
         return response()->json([
             'message' => '✅ Estat actualitzat',
-            'data' => $meeting
+            'data' => new MeetingResource($meeting->load(['users'])->loadCount('users')),
         ], 200);
     }
 }

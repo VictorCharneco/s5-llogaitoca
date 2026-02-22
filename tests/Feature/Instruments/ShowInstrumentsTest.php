@@ -41,7 +41,7 @@ class ShowInstrumentsTest extends TestCase{
         ])->getJson("/api/instruments/{$instrument->id}");
 
         $response->assertStatus(200)->assertJsonStructure([
-            'data' => ['id', 'name', 'description', 'type', 'status', 'image_path', 'created_at', 'updated_at',],
+            'data' => ['id', 'name', 'description', 'type', 'status', 'image_url', 'created_at', 'updated_at',],
         ])
         ->assertJsonPath('data.name', 'Trompeta')
         ->assertJsonPath('data.status', 'AVAILABLE');

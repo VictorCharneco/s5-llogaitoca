@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Resources\InstrumentResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -19,7 +20,7 @@ class InstrumentController extends Controller
 
     public function index(Request $request): JsonResponse{
         $instruments = $this->instrumentService->getInstruments($request->query('type'));
-        return response()->json(['data' => $instruments,]);
+        return response()->json(['data' => InstrumentResource::collection($instruments)]);
     }
 
     public function show(int $id):JsonResponse{
@@ -29,7 +30,7 @@ class InstrumentController extends Controller
             return response()->json(['message' => "No s'ha trobat l'instrument"], 404);
         }
 
-        return response()->json(['data' => $instrument,]); 
+        return response()->json(['data' => new InstrumentResource($instrument)]); 
     }
 
     public function store(Request $request): JsonResponse{
@@ -43,7 +44,7 @@ class InstrumentController extends Controller
 
         $instrument = $this->instrumentService->createInstrument($validated, $request->file('image'));
 
-        return response()->json(['data' => $instrument,], 201);
+        return response()->json(['data' => new InstrumentResource($instrument)], 201);
     }
 
     public function update(Request $request, int $id): JsonResponse{
