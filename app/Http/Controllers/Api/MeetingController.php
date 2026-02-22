@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\Meetings\CreateMeetingAction;
+use App\Actions\Meetings\JoinMeetingAction;
+use App\Http\Requests\Meetings\StoreMeetingRequest;
 use App\Http\Resources\MeetingResource;
 use App\Http\Controllers\Controller;
 use App\Models\Meeting;
-use App\Models\Reservation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,119 +37,32 @@ class MeetingController extends Controller
         return response()->json(['data' => MeetingResource::collection($meetings)], 200);
     }
 
-    public function store(Request $request): JsonResponse{
+    public function store(StoreMeetingRequest $request, CreateMeetingAction $action): JsonResponse{
         if (Auth::user()?->role === 'admin') {
             return response()->json(['message' => "⛔️ Prohibit. Accès només per l'Administrador."], 403);
         }
 
-        $validated = $request->validate([
-            'reservation_id' => ['required', 'integer', 'exists:reservations,id'],
-            'room' => ['required', 'in:SPRINGSTEEN,DYLAN,ARMSTRONG,MARTIN'],
-            'day' => ['required', 'date'],
-            'start_time' => ['required', 'date_format:H:i'],
-            'end_time' => ['required', 'date_format:H:i', 'after:start_time'],
-        ]);
+        $validated = $request->validated();
+        $result = $action->execute($validated);
 
-        $reservation = Reservation::query()
-            ->where('id', $validated['reservation_id'])
-            ->where('user_id', Auth::id())
-            ->where('status', 'ACTIVE')
-            ->first();
-
-        if (!$reservation) {
-            return response()->json(['message' => 'Has de seleccionar una reserva activa'], 422);
+        if (!$result['ok']) {
+            return response()->json(['message' => $result['message']], $result['status']);
         }
-
-        if ($validated['day'] < $reservation->start_date || $validated['day'] > $reservation->end_date) {
-            return response()->json(['message' => 'La quedada ha de ser dins el període del teu lloguer'], 422);
-        }
-
-        $roomOverlap = Meeting::query()
-            ->where('status', 'ACTIVE')
-            ->where('day', $validated['day'])
-            ->where('room', $validated['room'])
-            ->where('start_time', '<', $validated['end_time'])
-            ->where('end_time', '>', $validated['start_time'])
-            ->exists();
-
-        if ($roomOverlap) {
-            return response()->json(['message' => 'Ja hi ha una quedada reservada per a aquest horari'], 422);
-        }
-
-        $userOverlap = Meeting::query()
-            ->where('status', 'ACTIVE')
-            ->where('day', $validated['day'])
-            ->whereHas('users', function ($q) {
-                $q->where('users.id', Auth::id());
-            })
-            ->where('start_time', '<', $validated['end_time'])
-            ->where('end_time', '>', $validated['start_time'])
-            ->exists();
-
-        if ($userOverlap) {
-            return response()->json(['message' => 'Ja tens una quedada en aquest horari'], 422);
-        }
-
-        $meeting = Meeting::create([
-            'reservation_id' => $validated['reservation_id'],
-            'room' => $validated['room'],
-            'day' => $validated['day'],
-            'start_time' => $validated['start_time'],
-            'end_time' => $validated['end_time'],
-            'status' => 'ACTIVE',
-        ]);
-
-        $meeting->users()->attach(Auth::id());
 
         return response()->json([
             'message' => '✅ Quedada creada',
-            'data' => new MeetingResource($meeting->load(['users'])->loadCount('users')),
+            'data' => new MeetingResource($result['meeting']),
         ], 201);
     }
 
-    public function join(int $id): JsonResponse{
-        $meeting = Meeting::withCount('users')
-            ->where('status', 'ACTIVE')
-            ->findOrFail($id);
+    public function join(int $id, JoinMeetingAction $action): JsonResponse{
+        $result = $action->execute($id);
 
-        $alreadyIn = $meeting->users()
-            ->where('users.id', Auth::id())
-            ->exists();
-
-        if ($alreadyIn) {
-            return response()->json(['message' => 'Ja ets dins d’aquesta quedada.'], 422);
+        if (!$result['ok']) {
+            return response()->json(['message' => $result['message']], $result['status']);
         }
 
-        if ($meeting->users_count >= 4) {
-            return response()->json(['message' => 'Aquesta quedada ja està completa (4/4).'], 422);
-        }
-
-        $hasActiveReservation = Reservation::query()
-            ->where('user_id', Auth::id())
-            ->where('status', 'ACTIVE')
-            ->exists();
-
-        if (!$hasActiveReservation) {
-            return response()->json(['message' => 'Necessites una reserva activa per unir-te a una quedada.'], 422);
-        }
-
-        $userOverlap = Meeting::query()
-            ->where('status', 'ACTIVE')
-            ->where('day', $meeting->day)
-            ->whereHas('users', function ($q) {
-                $q->where('users.id', Auth::id());
-            })
-            ->where('start_time', '<', $meeting->end_time)
-            ->where('end_time', '>', $meeting->start_time)
-            ->exists();
-
-        if ($userOverlap) {
-            return response()->json(['message' => 'Ja tens una quedada en aquest horari'], 422);
-        }
-
-        $meeting->users()->attach(Auth::id());
-
-        return response()->json(['message' => '✅ T’has unit a la quedada!'], 200);
+        return response()->json(['message' => $result['message']], 200);
     }
 
     public function quit(int $id): JsonResponse{
