@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Reservation;
 use App\Services\ReservationService;
+use App\Http\Resources\ReservationResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -63,8 +64,12 @@ class ReservationController extends Controller
             $request->query('status')
         );
 
+        if (method_exists($reservations, 'load')) {
+            $reservations->load('instrument');
+        }
+
         return response()->json([
-            'data' => $reservations
+            'data' => ReservationResource::collection($reservations)
         ], 200);
     }
 
