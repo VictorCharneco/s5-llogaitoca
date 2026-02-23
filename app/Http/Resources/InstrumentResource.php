@@ -17,7 +17,7 @@ class InstrumentResource extends JsonResource
             'description' => $this->description,
             'type' => $this->type,
             'status' => $this->status,
-            'image_url' => $imagePath ? url(Storage::url($imagePath)) : null,
+            'image_url' => $imagePath ? url($imagePath) : null,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
