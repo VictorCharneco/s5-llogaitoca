@@ -11,12 +11,27 @@ use App\Models\Meeting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Carbon;
 
 class MeetingController extends Controller
 {
     public function index(): JsonResponse{
         $meetings = Meeting::with(['users'])
             ->withCount('users')
+            ->orderBy('day')
+            ->orderBy('start_time')
+            ->get();
+
+        return response()->json(['data' => MeetingResource::collection($meetings)], 200);
+    }
+
+    public function available(): JsonResponse{
+        $today = Carbon::now()->toDateString();
+
+        $meetings = Meeting::with(['users'])
+            ->withCount('users')
+            ->where('status', 'ACTIVE')
+            ->where('day', '>=', $today)
             ->orderBy('day')
             ->orderBy('start_time')
             ->get();

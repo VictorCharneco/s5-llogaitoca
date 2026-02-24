@@ -35,6 +35,7 @@ Route::middleware('auth:api')->group(function(){
     Route::post('/reservations/{id}/return', [ReservationController::class, 'returnReservation']);
     Route::delete('/reservations/{id}', [ReservationController::class, 'destroy']);
 
+    Route::get('/meetings/available', [MeetingController::class, 'available']);
     Route::post('/meetings', [MeetingController::class, 'store']);
     Route::post('/meetings/{id}/join', [MeetingController::class, 'join']);
     Route::post('/meetings/{id}/quit', [MeetingController::class, 'quit']);
