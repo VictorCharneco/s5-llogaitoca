@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Models\Instrument;
 use App\Services\InstrumentService;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class InstrumentController extends Controller
 {
@@ -40,9 +42,19 @@ class InstrumentController extends Controller
             'type' => ['required', 'in:STRING,KEYBOARD,PERCUSSION,WIND'],
             'status' => ['required', 'in:AVAILABLE,OUT_OF_STOCK,MAINTENANCE'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'image_url' => ['nullable', 'string', 'max:2048'],
         ]);
 
+        if (!empty($validated['image_url']) && empty($validated['image'])) {
+            $validated['image_path'] = $validated['image_url'];
+        }
+
         $instrument = $this->instrumentService->createInstrument($validated, $request->file('image'));
+
+        if (!empty($validated['image_path']) && !$instrument->image_path) {
+            $instrument->image_path = $validated['image_path'];
+            $instrument->save();
+        }
 
         return response()->json(['data' => new InstrumentResource($instrument)], 201);
     }
@@ -60,11 +72,24 @@ class InstrumentController extends Controller
             'type' => ['required', 'in:STRING,KEYBOARD,PERCUSSION,WIND'],
             'status' => ['required', 'in:AVAILABLE,OUT_OF_STOCK,MAINTENANCE'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'image_url' => ['nullable', 'string', 'max:2048'],
         ]);
+
+        if (!empty($validated['image_url']) && empty($validated['image'])) {
+            $validated['image_path'] = $validated['image_url'];
+        }
 
         $updated = $this->instrumentService->updateInstrument($instrument, $validated, $request->file('image'));
 
-        return response()->json(['data' =>$updated->fresh(),]);
+        if (!empty($validated['image_path'])) {
+            $fresh = $updated->fresh();
+            if (!$fresh->image_path || $fresh->image_path !== $validated['image_path']) {
+                $fresh->image_path = $validated['image_path'];
+                $fresh->save();
+            }
+        }
+
+        return response()->json(['data' => new InstrumentResource($updated->fresh())], 200);
 
     }
 
@@ -82,4 +107,36 @@ class InstrumentController extends Controller
         return response()->json(['message' => "🗑️ S'ha esborrat l'instrument",]);
     }
 
+    public function uploadImage(Request $request, int $id): JsonResponse{
+        $instrument = Instrument::find($id);
+
+        if(!$instrument){
+            return response()->json(['message' => "No s'ha trobat l'instrument"], 404);
+        }
+
+        $validated = $request->validate([
+            'image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+        ]);
+
+        $old = $instrument->image_path;
+        if ($old && !str_starts_with($old, 'demo/') && !str_starts_with($old, 'http')) {
+            if (Storage::disk('public')->exists($old)) {
+                Storage::disk('public')->delete($old);
+            }
+        }
+
+        $file = $request->file('image');
+        $ext = $file->getClientOriginalExtension() ?: 'webp';
+        $name = Str::uuid()->toString() . '.' . $ext;
+
+        $path = $file->storeAs('instruments', $name, 'public');
+
+        $instrument->image_path = $path;
+        $instrument->save();
+
+        return response()->json([
+            'message' => '✅ Image uploaded',
+            'data' => new InstrumentResource($instrument->fresh()),
+        ], 200);
+    }
 }
