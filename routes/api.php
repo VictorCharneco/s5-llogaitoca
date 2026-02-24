@@ -21,6 +21,7 @@ Route::middleware('auth:api')->group(function(){
         Route::post('/instruments', [InstrumentController::class, 'store']);
         Route::put('/instruments/{id}', [InstrumentController::class, 'update']);
         Route::delete('/instruments/{id}', [InstrumentController::class, 'destroy']);
+        Route::post('/instruments/{id}/image', [InstrumentController::class, 'uploadImage']);
         Route::get('/reservations', [ReservationController::class, 'index']);
         Route::get('/meetings', [MeetingController::class, 'index']);
         Route::delete('/meetings/{id}', [MeetingController::class, 'destroy']);
