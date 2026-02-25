@@ -66,7 +66,7 @@ class UpdateInstrumentAdminTest extends TestCase{
         ])->putJson("/api/instruments/{$instrument->id}", $data);
 
         $response->assertStatus(200)->assertJsonStructure([
-            'data' => ['id', 'name', 'description', 'type', 'status', 'image_path', 'created_at', 'updated_at',],
+            'data' => ['id', 'name', 'description', 'type', 'status', 'image_url', 'created_at', 'updated_at',],
         ])
         ->assertJsonPath('data.name', 'Nou nom')
         ->assertJsonPath('data.type', 'STRING')
