@@ -67,6 +67,19 @@ class DeleteUserTest extends TestCase {
         ]);
     }
 
+    public function test_admin_cannot_delete_own_account(): void{
+        $admin = User::factory()->create(['role'=> 'admin']);
+        $token = $admin->createToken('api-token')->accessToken;
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+            'Accept' => 'application/json',
+        ])->deleteJson("/api/users/{$admin->id}");
+
+        $response->assertStatus(403);
+        $this->assertDatabaseHas('users', ['id' => $admin->id,]);
+    }
+
     public function test_delete_user_returns_404_if_not_found(): void{
 
         $admin = User::factory()->create(['role' => 'admin']);
