@@ -26,12 +26,7 @@ class InstrumentController extends Controller
     }
 
     public function show(int $id):JsonResponse{
-        $instrument = Instrument::find($id);
-
-        if(!$instrument){
-            return response()->json(['message' => "No s'ha trobat l'instrument"], 404);
-        }
-
+        $instrument = Instrument::findOrFail($id);
         return response()->json(['data' => new InstrumentResource($instrument)]); 
     }
 
@@ -60,11 +55,7 @@ class InstrumentController extends Controller
     }
 
     public function update(Request $request, int $id): JsonResponse{
-        $instrument = Instrument::find($id);
-
-        if(!$instrument){
-            return response()->json(['message' => "No s'ha trobat l'instrument"], 404);
-        }
+        $instrument = Instrument::findOrFail($id);
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:100'],
@@ -96,11 +87,7 @@ class InstrumentController extends Controller
 
 
     public function destroy(int $id): JsonResponse{
-        $instrument = Instrument::find($id);
-
-        if(!$instrument){
-            return response()->json(['message' => "No s'ha trobat l'instrument"], 404);
-        }
+        $instrument = Instrument::findOrFail($id);
 
         $this->instrumentService->deleteInstrument($instrument);
 
@@ -108,11 +95,7 @@ class InstrumentController extends Controller
     }
 
     public function uploadImage(Request $request, int $id): JsonResponse{
-        $instrument = Instrument::find($id);
-
-        if(!$instrument){
-            return response()->json(['message' => "No s'ha trobat l'instrument"], 404);
-        }
+        $instrument = Instrument::findOrFail($id);
 
         $validated = $request->validate([
             'image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
