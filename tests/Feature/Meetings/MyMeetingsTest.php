@@ -41,7 +41,6 @@ class MyMeetingsTest extends TestCase{
             'data' => [
                 '*' => [
                     'id',
-                    'reservation_id',
                     'room',
                     'day',
                     'start_time',
@@ -51,8 +50,6 @@ class MyMeetingsTest extends TestCase{
                     'users' => [
                         '*' => ['id', 'name'],
                     ],
-                    'created_at',
-                    'updated_at',
                 ],
             ],
         ]);

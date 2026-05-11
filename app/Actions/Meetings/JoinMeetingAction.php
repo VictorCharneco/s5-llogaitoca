@@ -24,7 +24,7 @@ class JoinMeetingAction{
             return [
                 'ok' => false,
                 'status' => 422,
-                'message' => 'Ja ets dins d’aquesta quedada.',
+                'message' => 'You are already in this meeting.',
             ];
         }
 
@@ -32,7 +32,7 @@ class JoinMeetingAction{
             return [
                 'ok' => false,
                 'status' => 422,
-                'message' => 'Aquesta quedada ja està completa (4/4).',
+                'message' => 'This meeting is already full (4/4).',
             ];
         }
 
@@ -45,7 +45,7 @@ class JoinMeetingAction{
             return [
                 'ok' => false,
                 'status' => 422,
-                'message' => 'Necessites una reserva activa per unir-te a una quedada.',
+                'message' => 'You need an active reservation to join a meeting.',
             ];
         }
 
@@ -60,7 +60,7 @@ class JoinMeetingAction{
             return [
                 'ok' => false,
                 'status' => 422,
-                'message' => 'Ja tens una quedada en aquest horari',
+                'message' => 'You already have a meeting scheduled for this time slot. Please choose a different time or room.',
             ];
         }
 
@@ -69,7 +69,7 @@ class JoinMeetingAction{
         return [
             'ok' => true,
             'status' => 200,
-            'message' => '✅ T’has unit a la quedada!',
+            'message' => 'You have successfully joined the meeting!',
         ];
     }
 }

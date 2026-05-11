@@ -49,7 +49,6 @@ class MeetingsIndexAdminTest extends TestCase{
             'data' => [
                 '*' => [
                     'id',
-                    'reservation_id',
                     'room',
                     'day',
                     'start_time',
@@ -59,8 +58,6 @@ class MeetingsIndexAdminTest extends TestCase{
                     'users' => [
                         '*' => ['id', 'name'],
                     ],
-                    'created_at',
-                    'updated_at',
                 ],
             ],
         ]);

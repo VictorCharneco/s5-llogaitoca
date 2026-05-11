@@ -54,7 +54,7 @@ class MeetingController extends Controller
 
     public function store(StoreMeetingRequest $request, CreateMeetingAction $action): JsonResponse{
         if (Auth::user()?->role === 'admin') {
-            return response()->json(['message' => "⛔️ Prohibit. Accès només per l'Administrador."], 403);
+            return response()->json(['message' => 'Forbidden. This action is not allowed for administrators.'], 403);
         }
 
         $validated = $request->validated();
@@ -65,7 +65,7 @@ class MeetingController extends Controller
         }
 
         return response()->json([
-            'message' => '✅ Quedada creada',
+            'message' => 'Meeting created successfully',
             'data' => new MeetingResource($result['meeting']),
         ], 201);
     }
@@ -88,19 +88,19 @@ class MeetingController extends Controller
             ->exists();
 
         if (!$inMeeting) {
-            return response()->json(['message' => 'No estàs dins d’aquesta quedada.'], 422);
+            return response()->json(['message' => 'You are not in this meeting.'], 422);
         }
 
         $meeting->users()->detach(Auth::id());
 
-        return response()->json(['message' => '✅ Has sortit de la quedada.'], 200);
+        return response()->json(['message' => 'You have left the meeting.'], 200);
     }
 
     public function destroy(int $id): JsonResponse{
         $meeting = Meeting::findOrFail($id);
         $meeting->delete();
 
-        return response()->json(['message' => '🗑️ Quedada eliminada'], 200);
+        return response()->json(['message' => 'Meeting deleted.'], 200);
     }
 
     public function updateStatus(Request $request, int $id): JsonResponse{
@@ -113,7 +113,7 @@ class MeetingController extends Controller
         $meeting->save();
 
         return response()->json([
-            'message' => '✅ Estat actualitzat',
+            'message' => 'Status updated',
             'data' => new MeetingResource($meeting->load(['users'])->loadCount('users')),
         ], 200);
     }

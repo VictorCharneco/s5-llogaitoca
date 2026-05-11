@@ -91,7 +91,7 @@ class InstrumentController extends Controller
 
         $this->instrumentService->deleteInstrument($instrument);
 
-        return response()->json(['message' => "🗑️ S'ha esborrat l'instrument",]);
+        return response()->json(['message' => "Instrument deleted successfully",]);
     }
 
     public function uploadImage(Request $request, int $id): JsonResponse{
@@ -118,7 +118,7 @@ class InstrumentController extends Controller
         $instrument->save();
 
         return response()->json([
-            'message' => '✅ Image uploaded',
+            'message' => 'Image uploaded successfully',
             'data' => new InstrumentResource($instrument->fresh()),
         ], 200);
     }
