@@ -30,14 +30,17 @@ Route::middleware('auth:api')->group(function(){
 
     Route::get('/instruments', [InstrumentController::class, 'index']);
     Route::get('/instruments/{id}', [InstrumentController::class, 'show']);
-    Route::post('/instruments/{id}/reserve', [ReservationController::class, 'reserve']);
-    
-    Route::get('/reservations/my', [ReservationController::class, 'myReservations']);
+
+    Route::middleware('user')->group(function(){
+        Route::post('/instruments/{id}/reserve', [ReservationController::class, 'reserve']);
+        Route::get('/reservations/my', [ReservationController::class, 'myReservations']);
+        Route::post('/meetings', [MeetingController::class, 'store']);
+    });
+
     Route::post('/reservations/{id}/return', [ReservationController::class, 'returnReservation']);
     Route::delete('/reservations/{id}', [ReservationController::class, 'destroy']);
 
     Route::get('/meetings/available', [MeetingController::class, 'available']);
-    Route::post('/meetings', [MeetingController::class, 'store']);
     Route::post('/meetings/{id}/join', [MeetingController::class, 'join']);
     Route::post('/meetings/{id}/quit', [MeetingController::class, 'quit']);
     Route::get('/meetings/my', [MeetingController::class, 'myMeetings']);
