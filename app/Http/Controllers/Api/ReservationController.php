@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Contracts\ReservationServiceInterface;
 use App\Http\Controllers\Controller;
 use App\Models\Reservation;
-use App\Services\ReservationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,9 +12,9 @@ use App\Enums\ReservationStatus;
 
 class ReservationController extends Controller
 {
-    private ReservationService $reservationService;
+    private ReservationServiceInterface $reservationService;
 
-    public function __construct(ReservationService $reservationService)
+    public function __construct(ReservationServiceInterface $reservationService)
     {
         $this->reservationService = $reservationService;
     }

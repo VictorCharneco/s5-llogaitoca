@@ -2,13 +2,14 @@
 
 namespace App\Services;
 
+use App\Contracts\ReservationServiceInterface;
 use App\Enums\InstrumentStatus;
 use App\Enums\ReservationStatus;
 use App\Models\Instrument;
 use App\Models\Reservation;
 use Illuminate\Support\Facades\DB;
 
-class ReservationService
+class ReservationService implements ReservationServiceInterface
 {
     public function createReservation(int $userId, int $instrumentId, string $startDate, string $endDate): bool
     {

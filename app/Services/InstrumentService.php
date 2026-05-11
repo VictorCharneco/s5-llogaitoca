@@ -2,11 +2,12 @@
 
 namespace App\Services;
 
+use App\Contracts\InstrumentServiceInterface;
 use App\Models\Instrument;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
-class InstrumentService
+class InstrumentService implements InstrumentServiceInterface
 {
     public function getInstruments(?string $type){
         $query = Instrument::query();
