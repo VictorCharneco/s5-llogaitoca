@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\Instruments\StoreInstrumentRequest;
+use App\Http\Requests\Instruments\UpdateInstrumentRequest;
 use App\Http\Resources\InstrumentResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -30,15 +32,8 @@ class InstrumentController extends Controller
         return response()->json(['data' => new InstrumentResource($instrument)]); 
     }
 
-    public function store(Request $request): JsonResponse{
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:100'],
-            'description' => ['required', 'string'],
-            'type' => ['required', 'in:STRING,KEYBOARD,PERCUSSION,WIND'],
-            'status' => ['required', 'in:AVAILABLE,OUT_OF_STOCK,MAINTENANCE'],
-            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
-            'image_url' => ['nullable', 'string', 'max:2048'],
-        ]);
+    public function store(StoreInstrumentRequest $request): JsonResponse{
+        $validated = $request->validated();
 
         if (!empty($validated['image_url']) && empty($validated['image'])) {
             $validated['image_path'] = $validated['image_url'];
@@ -54,17 +49,10 @@ class InstrumentController extends Controller
         return response()->json(['data' => new InstrumentResource($instrument)], 201);
     }
 
-    public function update(Request $request, int $id): JsonResponse{
+    public function update(UpdateInstrumentRequest $request, int $id): JsonResponse
+    {
         $instrument = Instrument::findOrFail($id);
-
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:100'],
-            'description' => ['required', 'string'],
-            'type' => ['required', 'in:STRING,KEYBOARD,PERCUSSION,WIND'],
-            'status' => ['required', 'in:AVAILABLE,OUT_OF_STOCK,MAINTENANCE'],
-            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
-            'image_url' => ['nullable', 'string', 'max:2048'],
-        ]);
+        $validated = $request->validated();
 
         if (!empty($validated['image_url']) && empty($validated['image'])) {
             $validated['image_path'] = $validated['image_url'];
