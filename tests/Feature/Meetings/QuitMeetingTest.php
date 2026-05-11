@@ -18,7 +18,7 @@ class QuitMeetingTest extends TestCase{
 
     public function test_quit_meeting_requires_authentication():void{
         $meeting = Meeting::factory()->create();
-        $response = $this->postJson("/api/meetings/{$meeting->id}/quit");
+        $response = $this->deleteJson("/api/meetings/{$meeting->id}");
         $response->assertStatus(401);
     }
 
@@ -30,7 +30,7 @@ class QuitMeetingTest extends TestCase{
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
-        ])->postJson('/api/meetings/1985/quit');
+        ])->deleteJson('/api/meetings/1985/users');
 
         $response->assertStatus(404);
     }
@@ -44,7 +44,7 @@ class QuitMeetingTest extends TestCase{
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
-        ])->postJson("/api/meetings/{$meeting->id}/quit");
+        ])->deleteJson("/api/meetings/{$meeting->id}/users");
 
         $response->assertStatus(422);
     }
@@ -64,7 +64,7 @@ class QuitMeetingTest extends TestCase{
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
-        ])->postJson("/api/meetings/{$meeting->id}/quit");
+        ])->deleteJson("/api/meetings/{$meeting->id}/users");
 
         $response->assertStatus(200);
 
