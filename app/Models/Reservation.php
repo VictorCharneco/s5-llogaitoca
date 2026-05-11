@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ReservationStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,6 +20,9 @@ class Reservation extends Model
         'status',
     ];
 
+    protected $casts = [
+        'status' => ReservationStatus::class,
+    ];
 
     public function user(): BelongsTo{
         return $this->belongsTo(User::class);

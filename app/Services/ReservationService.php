@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Enums\InstrumentStatus;
+use App\Enums\ReservationStatus;
 use App\Models\Instrument;
 use App\Models\Reservation;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +15,7 @@ class ReservationService
         return DB::transaction(function () use ($userId, $instrumentId, $startDate, $endDate) {
             $instrument = Instrument::findOrFail($instrumentId);
 
-            if ($instrument->status === 'MAINTENANCE') {
+            if ($instrument->status === InstrumentStatus::Maintenance) {
                 return false;
             }
 
@@ -57,6 +59,6 @@ class ReservationService
 
     public function finishReservation(Reservation $reservation): void
     {
-        $reservation->update(['status' => 'FINISHED']);    
+        $reservation->update(['status' => ReservationStatus::Finished]);    
     }
 }

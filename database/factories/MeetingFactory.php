@@ -25,7 +25,7 @@ class MeetingFactory extends Factory
             'day' => '2026-03-20',
             'start_time' => '18:00',
             'end_time' => '20:00',
-            'status' => 'OPEN',
+            'status' => 'ACTIVE',
         ];
     }
 }

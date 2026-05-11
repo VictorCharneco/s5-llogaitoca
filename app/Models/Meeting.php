@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\MeetingRoom;
+use App\Enums\MeetingStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -20,7 +22,11 @@ class Meeting extends Model
         'end_time',
         'status',
     ];
-    
+
+    protected $casts = [
+        'room'   => MeetingRoom::class,
+        'status' => MeetingStatus::class,
+    ];
 
     public function reservation(): BelongsTo{
         return $this->belongsTo(Reservation::class);
