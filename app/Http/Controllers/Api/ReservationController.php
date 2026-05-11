@@ -23,7 +23,7 @@ class ReservationController extends Controller
     {
         if (Auth::user()?->role === 'admin') {
             return response()->json([
-                'message' => '⛔️ Prohibit. Accès només per l\'Administrador.'
+                'message' => 'Forbidden. This action is not allowed for administrators.'
             ], 403);
         }
 
@@ -41,12 +41,12 @@ class ReservationController extends Controller
 
         if (!$created) {
             return response()->json([
-                'message' => 'Aquest instrument no està disponible'
+                'message' => 'This instrument is not available for the selected dates.'
             ], 422);
         }
 
         return response()->json([
-            'message' => 'Reserva creada correctament'
+            'message' => 'Reservation created successfully'
         ], 201);
     }
 
@@ -54,7 +54,7 @@ class ReservationController extends Controller
     {
         if (Auth::user()?->role === 'admin') {
             return response()->json([
-                'message' => '⛔️ Prohibit. Accès només per l\'Administrador.'
+                'message' => 'Forbidden. This action is not allowed for administrators.'
             ], 403);
         }
 
@@ -85,14 +85,14 @@ class ReservationController extends Controller
 
         if (Auth::user()?->role !== 'admin' && $reservation->user_id !== Auth::id()) {
             return response()->json([
-                'message' => '⛔️ Prohibit.'
+                'message' => 'Forbidden. This action is not allowed for administrators.'
             ], 403);
         }
 
         $reservation->delete();
 
         return response()->json([
-            'message' => '🗑️ S\'ha esborrat la reserva'
+            'message' => 'Reservation deleted successfully'
         ], 200);
     }
 
@@ -102,20 +102,20 @@ class ReservationController extends Controller
 
         if ($reservation->user_id !== Auth::id()) {
             return response()->json([
-                'message' => '⛔️ Prohibit.'
+                'message' => 'Forbidden. You can only return your own reservations.'
             ], 403);
         }
 
         if ($reservation->status !== 'ACTIVE') {
             return response()->json([
-                'message' => 'Aquesta reserva ja està tancada'
+                'message' => 'This reservation is already closed'
             ], 422);
         }
 
         $this->reservationService->finishReservation($reservation);
 
         return response()->json([
-            'message' => 'Instrument retornat correctament'
+            'message' => 'Instrument returned successfully'
         ], 200);
     }
 }

@@ -19,13 +19,13 @@ class AdminMiddleware
 
         if(!$user){
             return response()->json([
-                'message' => '⚠️ No autenticat',
+                'message' => 'Unauthenticated. Please log in to access this resource.',
             ], 401);
         }
 
         if((strtolower((string)$user->role ?? '')) !== 'admin'){
             return response()->json([
-                'message' => "⛔️ Prohibit. Accès només per l'Administrador."
+                'message' => 'Forbidden. Administrator access required.'
             ], 403);
         }
         return $next($request);

@@ -21,7 +21,7 @@ class CreateMeetingAction{
             return [
                 'ok' => false,
                 'status' => 422,
-                'message' => 'Has de seleccionar una reserva activa',
+                'message' => 'You must select an active reservation that belongs to you to create a meeting.',
             ];
         }
 
@@ -29,7 +29,7 @@ class CreateMeetingAction{
             return [
                 'ok' => false,
                 'status' => 422,
-                'message' => 'La quedada ha de ser dins el període del teu lloguer',
+                'message' => 'The meeting must be within the period of your rental.',
             ];
         }
 
@@ -44,7 +44,7 @@ class CreateMeetingAction{
             return [
                 'ok' => false,
                 'status' => 422,
-                'message' => 'Ja hi ha una quedada reservada per a aquest horari',
+                'message' => 'There is already a meeting scheduled for this time slot. Please choose a different time or room.',
             ];
         }
 
@@ -59,7 +59,7 @@ class CreateMeetingAction{
             return [
                 'ok' => false,
                 'status' => 422,
-                'message' => 'Ja tens una quedada en aquest horari',
+                'message' => 'You already have a meeting scheduled for this time slot. Please choose a different time or room.',
             ];
         }
 
