@@ -61,11 +61,9 @@ class ReservationController extends Controller
     {
         $reservations = Reservation::with(['user', 'instrument'])
             ->orderByDesc('start_date')
-            ->get();
+            ->paginate(15);
 
-        return response()->json([
-            'data' => $reservations
-        ], 200);
+        return response()->json($reservations);
     }
 
     public function destroy(int $id): JsonResponse

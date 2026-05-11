@@ -21,9 +21,9 @@ class MeetingController extends Controller
             ->withCount('users')
             ->orderBy('day')
             ->orderBy('start_time')
-            ->get();
+            ->paginate(15);
 
-        return response()->json(['data' => MeetingResource::collection($meetings)], 200);
+        return MeetingResource::collection($meetings)->response();
     }
 
     public function available(): JsonResponse{
