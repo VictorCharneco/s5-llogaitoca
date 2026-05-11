@@ -9,16 +9,16 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Models\Instrument;
-use App\Services\InstrumentService;
+use App\Contracts\InstrumentServiceInterface;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class InstrumentController extends Controller
 {
-    private InstrumentService $instrumentService;
+    private InstrumentServiceInterface $instrumentService;
 
 
-    public function __construct(InstrumentService $instrumentService){
+    public function __construct(InstrumentServiceInterface $instrumentService){
         $this->instrumentService = $instrumentService;
     }
 
