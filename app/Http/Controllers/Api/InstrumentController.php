@@ -32,20 +32,10 @@ class InstrumentController extends Controller
         return response()->json(['data' => new InstrumentResource($instrument)]); 
     }
 
-    public function store(StoreInstrumentRequest $request): JsonResponse{
+    public function store(StoreInstrumentRequest $request): JsonResponse
+    {
         $validated = $request->validated();
-
-        if (!empty($validated['image_url']) && empty($validated['image'])) {
-            $validated['image_path'] = $validated['image_url'];
-        }
-
         $instrument = $this->instrumentService->createInstrument($validated, $request->file('image'));
-
-        if (!empty($validated['image_path']) && !$instrument->image_path) {
-            $instrument->image_path = $validated['image_path'];
-            $instrument->save();
-        }
-
         return response()->json(['data' => new InstrumentResource($instrument)], 201);
     }
 
@@ -53,26 +43,9 @@ class InstrumentController extends Controller
     {
         $instrument = Instrument::findOrFail($id);
         $validated = $request->validated();
-
-        if (!empty($validated['image_url']) && empty($validated['image'])) {
-            $validated['image_path'] = $validated['image_url'];
-        }
-
         $updated = $this->instrumentService->updateInstrument($instrument, $validated, $request->file('image'));
-
-        if (!empty($validated['image_path'])) {
-            $fresh = $updated->fresh();
-            if (!$fresh->image_path || $fresh->image_path !== $validated['image_path']) {
-                $fresh->image_path = $validated['image_path'];
-                $fresh->save();
-            }
-        }
-
         return response()->json(['data' => new InstrumentResource($updated->fresh())], 200);
-
     }
-
-
 
     public function destroy(int $id): JsonResponse{
         $instrument = Instrument::findOrFail($id);
@@ -90,7 +63,7 @@ class InstrumentController extends Controller
         ]);
 
         $old = $instrument->image_path;
-        if ($old && !str_starts_with($old, 'demo/') && !str_starts_with($old, 'http')) {
+        if ($instrument->isStoredImage()) {
             if (Storage::disk('public')->exists($old)) {
                 Storage::disk('public')->delete($old);
             }
