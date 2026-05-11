@@ -15,7 +15,7 @@ class InstrumentService
             $query->where('type', $type);
         }
 
-        return $query->get();
+        return $query->paginate(10);
     }
 
     public function createInstrument(array $validated, ?UploadedFile $imageFile): Instrument{

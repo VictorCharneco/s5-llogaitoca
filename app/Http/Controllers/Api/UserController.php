@@ -13,8 +13,8 @@ class UserController extends Controller
         $users = User::query()
                 ->select(['id', 'name', 'email', 'role', 'created_at', 'updated_at'])
                 ->orderBy('id', 'asc')
-                ->get();
-        return response()->json(['data' => $users,]);
+                ->paginate(15);
+        return response()->json($users);
     }
 
     public function show (int $id): JsonResponse{

@@ -24,7 +24,7 @@ class InstrumentController extends Controller
 
     public function index(Request $request): JsonResponse{
         $instruments = $this->instrumentService->getInstruments($request->query('type'));
-        return response()->json(['data' => InstrumentResource::collection($instruments)]);
+        return InstrumentResource::collection($instruments)->response();
     }
 
     public function show(int $id):JsonResponse{
