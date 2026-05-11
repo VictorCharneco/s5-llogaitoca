@@ -73,7 +73,7 @@ class ReservationController extends Controller
 
         if (Auth::user()?->role !== 'admin' && $reservation->user_id !== Auth::id()) {
             return response()->json([
-                'message' => 'Forbidden. This action is not allowed for administrators.'
+                'message' => 'Forbidden. You can only delete your own reservations.'
             ], 403);
         }
 
@@ -86,7 +86,7 @@ class ReservationController extends Controller
 
     public function returnReservation(int $id): JsonResponse
     {
-        $reservation = Reservation::with('instrument')->findOrFail($id);
+        $reservation = Reservation::findOrFail($id);
 
         if ($reservation->user_id !== Auth::id()) {
             return response()->json([
