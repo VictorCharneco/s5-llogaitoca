@@ -52,11 +52,8 @@ class MeetingController extends Controller
         return response()->json(['data' => MeetingResource::collection($meetings)], 200);
     }
 
-    public function store(StoreMeetingRequest $request, CreateMeetingAction $action): JsonResponse{
-        if (Auth::user()?->role === 'admin') {
-            return response()->json(['message' => 'Forbidden. This action is not allowed for administrators.'], 403);
-        }
-
+    public function store(StoreMeetingRequest $request, CreateMeetingAction $action): JsonResponse
+    {    
         $validated = $request->validated();
         $result = $action->execute($validated);
 

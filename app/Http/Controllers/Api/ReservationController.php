@@ -21,12 +21,6 @@ class ReservationController extends Controller
     
     public function reserve(Request $request, int $id): JsonResponse
     {
-        if (Auth::user()?->role === 'admin') {
-            return response()->json([
-                'message' => 'Forbidden. This action is not allowed for administrators.'
-            ], 403);
-        }
-
         $validated = $request->validate([
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after:start_date'],
@@ -52,12 +46,6 @@ class ReservationController extends Controller
 
     public function myReservations(Request $request): JsonResponse
     {
-        if (Auth::user()?->role === 'admin') {
-            return response()->json([
-                'message' => 'Forbidden. This action is not allowed for administrators.'
-            ], 403);
-        }
-
         $reservations = $this->reservationService->getMyReservations(
             Auth::id(),
             $request->query('status')
