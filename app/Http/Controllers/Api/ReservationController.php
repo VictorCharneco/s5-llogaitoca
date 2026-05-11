@@ -8,6 +8,7 @@ use App\Services\ReservationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Enums\ReservationStatus;
 
 class ReservationController extends Controller
 {
@@ -94,7 +95,7 @@ class ReservationController extends Controller
             ], 403);
         }
 
-        if ($reservation->status !== 'ACTIVE') {
+        if ($reservation->status !== ReservationStatus::Active) {
             return response()->json([
                 'message' => 'This reservation is already closed'
             ], 422);

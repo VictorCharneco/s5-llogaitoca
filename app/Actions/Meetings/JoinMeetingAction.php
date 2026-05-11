@@ -2,6 +2,7 @@
 
 namespace App\Actions\Meetings;
 
+use App\Enums\ReservationStatus;
 use App\Models\Meeting;
 use App\Models\Reservation;
 use Illuminate\Support\Facades\Auth;
@@ -38,7 +39,7 @@ class JoinMeetingAction{
 
         $hasActiveReservation = Reservation::query()
             ->where('user_id', Auth::id())
-            ->where('status', 'ACTIVE')
+            ->where('status', ReservationStatus::Active)
             ->exists();
 
         if (!$hasActiveReservation) {

@@ -12,7 +12,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
-
+use App\Enums\MeetingStatus;
+use Illuminate\Validation\Rule;
 class MeetingController extends Controller
 {
     public function index(): JsonResponse{
@@ -102,7 +103,7 @@ class MeetingController extends Controller
 
     public function updateStatus(Request $request, int $id): JsonResponse{
         $validated = $request->validate([
-            'status' => ['required', 'in:ACTIVE,FINISHED,CANCELLED'],
+            'status' => ['required', Rule::enum(MeetingStatus::class)],
         ]);
 
         $meeting = Meeting::findOrFail($id);

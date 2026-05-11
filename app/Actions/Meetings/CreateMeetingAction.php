@@ -2,6 +2,8 @@
 
 namespace App\Actions\Meetings;
 
+use App\Enums\MeetingStatus;
+use App\Enums\ReservationStatus;
 use App\Models\Meeting;
 use App\Models\Reservation;
 use Illuminate\Support\Facades\Auth;
@@ -14,7 +16,7 @@ class CreateMeetingAction{
         $reservation = Reservation::query()
             ->where('id', $validated['reservation_id'])
             ->where('user_id', Auth::id())
-            ->where('status', 'ACTIVE')
+            ->where('status', ReservationStatus::Active)
             ->first();
 
         if (!$reservation) {
@@ -69,7 +71,7 @@ class CreateMeetingAction{
             'day' => $validated['day'],
             'start_time' => $validated['start_time'],
             'end_time' => $validated['end_time'],
-            'status' => 'ACTIVE',
+            'status' => MeetingStatus::Active,
         ]);
 
         $meeting->users()->attach(Auth::id());

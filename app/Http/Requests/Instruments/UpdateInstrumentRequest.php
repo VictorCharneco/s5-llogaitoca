@@ -3,6 +3,9 @@
 namespace App\Http\Requests\Instruments;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Enums\InstrumentType;
+use App\Enums\InstrumentStatus;
+use Illuminate\Validation\Rule;
 
 class UpdateInstrumentRequest extends FormRequest
 {
@@ -24,8 +27,8 @@ class UpdateInstrumentRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:100'],
             'description' => ['required', 'string'],
-            'type' => ['required', 'in:STRING,KEYBOARD,PERCUSSION,WIND'],
-            'status' => ['required', 'in:AVAILABLE,OUT_OF_STOCK,MAINTENANCE'],
+            'type' => ['required', Rule::enum(InstrumentType::class)],
+            'status' => ['required', Rule::enum(InstrumentStatus::class)],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
             'image_url' => ['nullable', 'url', 'max:2048'],
         ];
