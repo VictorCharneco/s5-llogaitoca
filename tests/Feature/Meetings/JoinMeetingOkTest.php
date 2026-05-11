@@ -17,7 +17,7 @@ class JoinMeetingOkTest extends TestCase{
         app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
     }
 
-    public function test_user_can_join_meeting(): void{
+    public function test_user_can_users_meeting(): void{
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -39,7 +39,7 @@ class JoinMeetingOkTest extends TestCase{
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
-        ])->postJson("/api/meetings/{$meeting->id}/join");
+        ])->postJson("/api/meetings/{$meeting->id}/users");
 
         $response->assertStatus(200);
 
@@ -49,7 +49,7 @@ class JoinMeetingOkTest extends TestCase{
         ]);
     }
 
-    public function test_join_rejects_if_user_already_in():void{
+    public function test_users_rejects_if_user_already_in():void{
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -73,12 +73,12 @@ class JoinMeetingOkTest extends TestCase{
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
-        ])->postJson("/api/meetings/{$meeting->id}/join");
+        ])->postJson("/api/meetings/{$meeting->id}/users");
 
         $response->assertStatus(422);
     }
 
-    public function test_join_rejects_if_meeting_is_full():void{
+    public function test_users_rejects_if_meeting_is_full():void{
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -107,13 +107,13 @@ class JoinMeetingOkTest extends TestCase{
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
-        ])->postJson("/api/meetings/{$meeting->id}/join");
+        ])->postJson("/api/meetings/{$meeting->id}/users");
 
         $response->assertStatus(422);
     }
 
 
-    public function test_join_rejects_if_user_has_no_active_reservation():void{
+    public function test_users_rejects_if_user_has_no_active_reservation():void{
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -135,7 +135,7 @@ class JoinMeetingOkTest extends TestCase{
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
-        ])->postJson("/api/meetings/{$meeting->id}/join");
+        ])->postJson("/api/meetings/{$meeting->id}/users");
 
         $response->assertStatus(422);
 
@@ -143,7 +143,7 @@ class JoinMeetingOkTest extends TestCase{
 
 
 
-    public function test_join_rejects_if_user_has_time_overlap():void{
+    public function test_users_rejects_if_user_has_time_overlap():void{
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -175,7 +175,7 @@ class JoinMeetingOkTest extends TestCase{
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
-        ])->postJson("/api/meetings/{$newMeeting->id}/join");
+        ])->postJson("/api/meetings/{$newMeeting->id}/users");
 
         $response->assertStatus(422);
 

@@ -19,13 +19,13 @@ class ReserveInstrumentTest extends TestCase{
         app(ClientRepository::class)->createPersonalAccessGrantClient('Test Personal Access Client');
     }
 
-    public function test_reserve_requires_authentication():void{
+    public function test_reservations_requires_authentication():void{
         $instrument = Instrument::factory()->create();
-        $response = $this->postJson("/api/instruments/{$instrument->id}/reserve", []);
+        $response = $this->postJson("/api/instruments/{$instrument->id}/reservations", []);
         $response->assertStatus(401);
     }
 
-    public function test_reserve_rejects_admin():void{
+    public function test_reservations_rejects_admin():void{
         
         $admin = User::factory()->create(['role' => 'admin']);
         $token = $admin->createToken('api-token')->accessToken;
@@ -36,12 +36,12 @@ class ReserveInstrumentTest extends TestCase{
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
-        ])->postJson("/api/instruments/{$instrument->id}/reserve", $data);
+        ])->postJson("/api/instruments/{$instrument->id}/reservations", $data);
 
         $response->assertStatus(403);
     }
 
-    public function test_user_can_reserve_instrument():void{
+    public function test_user_can_reservations_instrument():void{
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -52,12 +52,12 @@ class ReserveInstrumentTest extends TestCase{
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
-        ])->postJson("/api/instruments/{$instrument->id}/reserve", $data);
+        ])->postJson("/api/instruments/{$instrument->id}/reservations", $data);
 
         $response->assertStatus(201);
     }
 
-    public function test_reserve_validates_dates():void{
+    public function test_reservations_validates_dates():void{
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -66,12 +66,12 @@ class ReserveInstrumentTest extends TestCase{
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
-        ])->postJson("/api/instruments/{$instrument->id}/reserve", []);
+        ])->postJson("/api/instruments/{$instrument->id}/reservations", []);
 
         $response->assertStatus(422)->assertJsonValidationErrors(['start_date', 'end_date']);
     }
 
-    public function test_reserve_returns_404_if_instrument_not_found():void{
+    public function test_reservations_returns_404_if_instrument_not_found():void{
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -79,7 +79,7 @@ class ReserveInstrumentTest extends TestCase{
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
-        ])->postJson("/api/instruments/1985/reserve", [
+        ])->postJson("/api/instruments/1985/reservations", [
             'start_date' => '2026-03-20',
             'end_date' => '2026-03-30',
         ]);
@@ -87,7 +87,7 @@ class ReserveInstrumentTest extends TestCase{
         $response->assertStatus(404);
     }
 
-    public function test_reserve_rejects_if_instrument_not_available():void{
+    public function test_reservations_rejects_if_instrument_not_available():void{
 
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
@@ -96,7 +96,7 @@ class ReserveInstrumentTest extends TestCase{
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
-        ])->postJson("/api/instruments/{$instrument->id}/reserve", [
+        ])->postJson("/api/instruments/{$instrument->id}/reservations", [
             'start_date' => '2026-03-20',
             'end_date' => '2026-03-30',
         ]);

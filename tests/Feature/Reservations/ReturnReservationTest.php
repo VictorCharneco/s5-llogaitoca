@@ -18,7 +18,7 @@ class ReturnReservationTest extends TestCase{
 
     public function test_return_requires_authentication():void{
         $reservation = Reservation::factory()->create(['status' => 'ACTIVE']);
-        $response = $this->postJson("/api/reservations/{$reservation->id}/return");
+        $response = $this->patchJson("/api/reservations/{$reservation->id}");
         $response->assertStatus(401);
     }
 
@@ -35,7 +35,7 @@ class ReturnReservationTest extends TestCase{
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
-        ])->postJson("/api/reservations/{$reservation->id}/return");
+        ])->patchJson("/api/reservations/{$reservation->id}");
 
         $response->assertStatus(403);
     }
@@ -52,7 +52,7 @@ class ReturnReservationTest extends TestCase{
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
-        ])->postJson("/api/reservations/{$reservation->id}/return");
+        ])->patchJson("/api/reservations/{$reservation->id}");
 
         $response->assertStatus(422);
     }
@@ -69,7 +69,7 @@ class ReturnReservationTest extends TestCase{
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
-        ])->postJson("/api/reservations/{$reservation->id}/return");
+        ])->patchJson("/api/reservations/{$reservation->id}");
 
         $response->assertStatus(200);
 
@@ -83,7 +83,7 @@ class ReturnReservationTest extends TestCase{
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
-        ])->postJson("/api/reservations/1985/return");
+        ])->patchJson("/api/reservations/1985");
 
         $response->assertStatus(404);
 
