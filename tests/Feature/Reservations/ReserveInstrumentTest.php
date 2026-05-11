@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Reservations;
 
+use App\Models\Reservation;
 use App\Models\Instrument;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -87,22 +88,45 @@ class ReserveInstrumentTest extends TestCase{
         $response->assertStatus(404);
     }
 
-    public function test_reservations_rejects_if_instrument_not_available():void{
-
+    public function test_reserve_rejects_if_instrument_not_available(): void
+    {
         $user = User::factory()->create(['role' => 'user']);
         $token = $user->createToken('api-token')->accessToken;
-        $instrument = Instrument::factory()->create(['status' => 'MAINTENANCE']);
+        $instrument = Instrument::factory()->create(['status' => 'MAINTENANCE']); // cambiar aquí
 
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
-            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . $token ,
+            'Accept'        => 'application/json',
         ])->postJson("/api/instruments/{$instrument->id}/reservations", [
-            'start_date' => '2026-03-20',
-            'end_date' => '2026-03-30',
+            'start_date' => '2026-06-01',
+            'end_date'   => '2026-06-10',
         ]);
 
         $response->assertStatus(422);
     }
 
+    public function test_reserve_rejects_if_dates_overlap():void
+    {
+        $user = User::factory()->create(['role' => 'user']);
+        $token = $user->createToken('api-token')->accessToken;
+        $instrument = Instrument::factory()->create(['status' => 'AVAILABLE']);
+
+        Reservation::factory()->create([
+            'instrument_id' => $instrument->id,
+            'status'        => 'ACTIVE',
+            'start_date'    => '2026-06-01',
+            'end_date'      => '2026-06-15',
+        ]);
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+            'Accept'        => 'application/json',
+        ])->postJson("/api/instruments/{$instrument->id}/reservations",[
+            'start_date'    => '2026-06-10',
+            'end_date'      => '2026-06-20',
+        ]);
+
+        $response->assertStatus(422);
+    }
 
 }
