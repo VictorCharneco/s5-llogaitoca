@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\InstrumentStatus;
+use App\Enums\InstrumentType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Storage;
@@ -16,6 +18,11 @@ class Instrument extends Model
         'type',
         'status',
         'image_path',
+    ];
+
+    protected $casts = [
+        'type'   => InstrumentType::class,
+        'status' => InstrumentStatus::class,
     ];
 
     public function getImageUrl(): ?string
